@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MarokkaanseReceptenApp/MarokkaanseReceptenApp.csproj" />
+  <Project Path="ModelLibrary/ModelLibrary.csproj" />
+</Solution>
