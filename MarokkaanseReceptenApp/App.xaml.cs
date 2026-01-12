@@ -6,6 +6,9 @@ using ModelLibrary.Data;
 
 namespace MarokkaanseReceptenApp
 {
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
     public partial class App : Application
     {
         public static IServiceProvider Services { get; private set; }
@@ -24,7 +27,7 @@ namespace MarokkaanseReceptenApp
             base.OnStartup(e);
         }
     }
-}
+    }
 
 
 
