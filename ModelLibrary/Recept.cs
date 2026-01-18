@@ -12,13 +12,14 @@ namespace ModelLibrary.Models
     {
         public int Id { get; set; }
         public string Naam { get; set; }
+        public int CategorieId { get; set; }
         public string Bereiding { get; set; }
         public string FotoPad { get; set; }
         public string Herkomst { get; set; }
         public bool IsDeleted { get; set; }
 
-        public int CategorieId { get; set; }
         public virtual Categorie Categorie { get; set; }
-        public virtual List<Ingredient> Ingrediënten { get; set; }
+        public virtual ICollection<Ingredient> Ingredienten { get; set; } = new List<Ingredient>();
     }
 }
+

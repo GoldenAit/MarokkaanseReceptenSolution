@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModelLibrary.Data;
 
@@ -11,9 +12,11 @@ using ModelLibrary.Data;
 namespace ModelLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260112044111_SeedIngredientsWithReceptId")]
+    partial class SeedIngredientsWithReceptId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,7 +256,7 @@ namespace ModelLibrary.Migrations
                         {
                             Id = "100",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "19aa1de5-459f-4a27-aef3-61624bacefbf",
+                            ConcurrencyStamp = "92f1cd03-455c-4dc6-8598-ba616627a6f6",
                             Email = "admin@marokkaans.be",
                             EmailConfirmed = true,
                             FavoriteCuisine = "Marokkaans",
@@ -262,7 +265,7 @@ namespace ModelLibrary.Migrations
                             NormalizedUserName = "ADMIN@MAROKKAANS.BE",
                             PasswordHash = "AQAAAAIAAYagAAAAEK8D3dMZx+7cOeFhvI0/b4mcyQmRleN8zB1WJZTfT4xPj7u3YtJ+EztqMIAlMCsNw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8e76db11-def4-4c74-9937-df29ffe2543b",
+                            SecurityStamp = "7b43adc2-6a23-400f-a2f0-a429a62d460f",
                             TwoFactorEnabled = false,
                             UserName = "admin@marokkaans.be",
                             VolledigeNaam = "Admin Marokkaans"
@@ -277,6 +280,9 @@ namespace ModelLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Naam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -289,21 +295,25 @@ namespace ModelLibrary.Migrations
                         new
                         {
                             Id = 1,
+                            IsDeleted = false,
                             Naam = "Hoofdgerechten"
                         },
                         new
                         {
                             Id = 2,
+                            IsDeleted = false,
                             Naam = "Soepen"
                         },
                         new
                         {
                             Id = 3,
+                            IsDeleted = false,
                             Naam = "Brood"
                         },
                         new
                         {
                             Id = 4,
+                            IsDeleted = false,
                             Naam = "Zoetigheden"
                         });
                 });
@@ -339,7 +349,7 @@ namespace ModelLibrary.Migrations
                     b.HasData(
                         new
                         {
-                            Id = -1,
+                            Id = 1,
                             Hoeveelheid = "500g",
                             IsDeleted = false,
                             Naam = "Kip",
@@ -347,31 +357,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -2,
-                            Hoeveelheid = "500g",
-                            IsDeleted = false,
-                            Naam = "Lamsvlees",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -3,
-                            Hoeveelheid = "200g",
-                            IsDeleted = false,
-                            Naam = "Rijst",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -4,
-                            Hoeveelheid = "100g",
-                            IsDeleted = false,
-                            Naam = "Amandelen",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -5,
+                            Id = 2,
                             Hoeveelheid = "50ml",
                             IsDeleted = false,
                             Naam = "Olijfolie",
@@ -379,7 +365,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -6,
+                            Id = 3,
                             Hoeveelheid = "2 stuks",
                             IsDeleted = false,
                             Naam = "Ui",
@@ -387,7 +373,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -7,
+                            Id = 4,
                             Hoeveelheid = "3 teentjes",
                             IsDeleted = false,
                             Naam = "Knoflook",
@@ -395,7 +381,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -8,
+                            Id = 5,
                             Hoeveelheid = "1 tl",
                             IsDeleted = false,
                             Naam = "Komijn",
@@ -403,7 +389,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -9,
+                            Id = 6,
                             Hoeveelheid = "1 tl",
                             IsDeleted = false,
                             Naam = "Kaneel",
@@ -411,11 +397,75 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -10,
+                            Id = 7,
                             Hoeveelheid = "1 stuk",
                             IsDeleted = false,
                             Naam = "Sinaasappel",
                             ReceptId = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Hoeveelheid = "500g",
+                            IsDeleted = false,
+                            Naam = "Lamsvlees",
+                            ReceptId = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Hoeveelheid = "300g",
+                            IsDeleted = false,
+                            Naam = "Tomaten",
+                            ReceptId = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Hoeveelheid = "200g",
+                            IsDeleted = false,
+                            Naam = "Kikkererwten",
+                            ReceptId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Hoeveelheid = "500g",
+                            IsDeleted = false,
+                            Naam = "Bloem",
+                            ReceptId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Hoeveelheid = "250ml",
+                            IsDeleted = false,
+                            Naam = "Water",
+                            ReceptId = 3
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Hoeveelheid = "7g",
+                            IsDeleted = false,
+                            Naam = "Gist",
+                            ReceptId = 3
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Hoeveelheid = "50g",
+                            IsDeleted = false,
+                            Naam = "Sesamzaad",
+                            ReceptId = 4
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Hoeveelheid = "100g",
+                            IsDeleted = false,
+                            Naam = "Honing",
+                            ReceptId = 4
                         });
                 });
 
@@ -552,7 +602,7 @@ namespace ModelLibrary.Migrations
             modelBuilder.Entity("ModelLibrary.Models.Ingredient", b =>
                 {
                     b.HasOne("ModelLibrary.Models.Recept", "Recept")
-                        .WithMany("Ingredienten")
+                        .WithMany("Ingrediënten")
                         .HasForeignKey("ReceptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -578,7 +628,7 @@ namespace ModelLibrary.Migrations
 
             modelBuilder.Entity("ModelLibrary.Models.Recept", b =>
                 {
-                    b.Navigation("Ingredienten");
+                    b.Navigation("Ingrediënten");
                 });
 #pragma warning restore 612, 618
         }

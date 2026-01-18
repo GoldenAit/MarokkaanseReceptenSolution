@@ -13,8 +13,6 @@ namespace ModelLibrary.Data
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-
-            // Connection string naar je lokale database
             optionsBuilder.UseSqlServer(
                 "Server=(localdb)\\MSSQLLocalDB;Database=MarokkaanseReceptenDb;Trusted_Connection=True;"
             );
