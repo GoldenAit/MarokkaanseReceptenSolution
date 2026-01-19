@@ -18,8 +18,24 @@
         <Grid>
             <TabControl>
                 <TabItem Header="Recepten">
-                    <DataGrid x:Name="ReceptenDataGrid" AutoGenerateColumns="True"/>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Content="Add" Click="AddRecept_Click"/>
+                            <Button Content="Edit" Click="EditRecept_Click"/>
+                            <Button Content="Delete" Click="DeleteRecept_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="ReceptenDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="60"/>
+                                <DataGridTextColumn Header="Naam" Binding="{Binding Naam}" Width="*"/>
+                                <DataGridTextColumn Header="Categorie" Binding="{Binding Categorie.Naam}" Width="200"/>
+                                <DataGridTextColumn Header="Herkomst" Binding="{Binding Herkomst}" Width="150"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
                 </TabItem>
+
 
                 <TabItem Header="Categorieën">
                     <DockPanel>
@@ -40,8 +56,24 @@
 
 
                 <TabItem Header="Ingrediënten">
-                    <DataGrid x:Name="IngredientenDataGrid" AutoGenerateColumns="True"/>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Content="Add" Click="AddIngredient_Click"/>
+                            <Button Content="Edit" Click="EditIngredient_Click"/>
+                            <Button Content="Delete" Click="DeleteIngredient_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="IngredientenDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="60"/>
+                                <DataGridTextColumn Header="Naam" Binding="{Binding Naam}" Width="*"/>
+                                <DataGridTextColumn Header="Hoeveelheid" Binding="{Binding Hoeveelheid}" Width="150"/>
+                                <DataGridTextColumn Header="Recept" Binding="{Binding Recept.Naam}" Width="250"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
                 </TabItem>
+
 
                 <TabItem Header="Admin" x:Name="AdminTab">
                     <StackPanel Margin="10">

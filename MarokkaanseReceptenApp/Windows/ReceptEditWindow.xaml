@@ -1,0 +1,38 @@
+﻿<Window x:Class="MarokkaanseReceptenApp.Windows.ReceptEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:MarokkaanseReceptenApp.Controls"
+        Title="Recept" Height="430" Width="520"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <controls:LabeledTextBox Label="Naam" Text="{Binding Naam, Mode=TwoWay}" />
+
+            <TextBlock Text="Categorie" Margin="4,10,4,0"/>
+            <ComboBox ItemsSource="{Binding Categorieen}"
+                      DisplayMemberPath="Naam"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding CategorieId, Mode=TwoWay}"
+                      Margin="4"/>
+
+            <controls:LabeledTextBox Label="Herkomst" Text="{Binding Herkomst, Mode=TwoWay}" />
+            <controls:LabeledTextBox Label="FotoPad" Text="{Binding FotoPad, Mode=TwoWay}" />
+
+            <TextBlock Text="Bereiding" Margin="4,10,4,0"/>
+            <TextBox Text="{Binding Bereiding, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     Height="130"
+                     Margin="4"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Annuleer" Click="Cancel_Click"/>
+            <Button Content="Opslaan" Click="Save_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
