@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ModelLibrary.Data;
+using ModelLibrary;
 
 #nullable disable
 
 namespace ModelLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260112053631_SeedDataFix")]
-    partial class SeedDataFix
+    [Migration("20260118204416_AddIsBlockedAndSoftDeleteFilters")]
+    partial class AddIsBlockedAndSoftDeleteFilters
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,20 +50,6 @@ namespace ModelLibrary.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -151,13 +137,6 @@ namespace ModelLibrary.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "100",
-                            RoleId = "1"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -201,6 +180,12 @@ namespace ModelLibrary.Migrations
                     b.Property<string>("FavoriteCuisine")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -250,26 +235,6 @@ namespace ModelLibrary.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "100",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "19aa1de5-459f-4a27-aef3-61624bacefbf",
-                            Email = "admin@marokkaans.be",
-                            EmailConfirmed = true,
-                            FavoriteCuisine = "Marokkaans",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@MAROKKAANS.BE",
-                            NormalizedUserName = "ADMIN@MAROKKAANS.BE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK8D3dMZx+7cOeFhvI0/b4mcyQmRleN8zB1WJZTfT4xPj7u3YtJ+EztqMIAlMCsNw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "8e76db11-def4-4c74-9937-df29ffe2543b",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@marokkaans.be",
-                            VolledigeNaam = "Admin Marokkaans"
-                        });
                 });
 
             modelBuilder.Entity("ModelLibrary.Models.Categorie", b =>
@@ -279,6 +244,9 @@ namespace ModelLibrary.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -292,22 +260,20 @@ namespace ModelLibrary.Migrations
                         new
                         {
                             Id = 1,
-                            Naam = "Hoofdgerechten"
+                            IsDeleted = false,
+                            Naam = "Marokkaans"
                         },
                         new
                         {
                             Id = 2,
-                            Naam = "Soepen"
+                            IsDeleted = false,
+                            Naam = "Vegetarisch"
                         },
                         new
                         {
                             Id = 3,
-                            Naam = "Brood"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Naam = "Zoetigheden"
+                            IsDeleted = false,
+                            Naam = "Bakrecepten"
                         });
                 });
 
@@ -342,7 +308,7 @@ namespace ModelLibrary.Migrations
                     b.HasData(
                         new
                         {
-                            Id = -1,
+                            Id = 1,
                             Hoeveelheid = "500g",
                             IsDeleted = false,
                             Naam = "Kip",
@@ -350,15 +316,7 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -2,
-                            Hoeveelheid = "500g",
-                            IsDeleted = false,
-                            Naam = "Lamsvlees",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -3,
+                            Id = 2,
                             Hoeveelheid = "200g",
                             IsDeleted = false,
                             Naam = "Rijst",
@@ -366,58 +324,10 @@ namespace ModelLibrary.Migrations
                         },
                         new
                         {
-                            Id = -4,
+                            Id = 3,
                             Hoeveelheid = "100g",
                             IsDeleted = false,
                             Naam = "Amandelen",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -5,
-                            Hoeveelheid = "50ml",
-                            IsDeleted = false,
-                            Naam = "Olijfolie",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -6,
-                            Hoeveelheid = "2 stuks",
-                            IsDeleted = false,
-                            Naam = "Ui",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -7,
-                            Hoeveelheid = "3 teentjes",
-                            IsDeleted = false,
-                            Naam = "Knoflook",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -8,
-                            Hoeveelheid = "1 tl",
-                            IsDeleted = false,
-                            Naam = "Komijn",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -9,
-                            Hoeveelheid = "1 tl",
-                            IsDeleted = false,
-                            Naam = "Kaneel",
-                            ReceptId = 1
-                        },
-                        new
-                        {
-                            Id = -10,
-                            Hoeveelheid = "1 stuk",
-                            IsDeleted = false,
-                            Naam = "Sinaasappel",
                             ReceptId = 1
                         });
                 });
@@ -462,42 +372,32 @@ namespace ModelLibrary.Migrations
                         new
                         {
                             Id = 1,
-                            Bereiding = "Traditionele Marokkaanse kip-tajine met groenten en kruiden.",
+                            Bereiding = "Stap voor stap...",
                             CategorieId = 1,
                             FotoPad = "",
                             Herkomst = "Marokko",
                             IsDeleted = false,
-                            Naam = "Tajine met kip"
+                            Naam = "Tajine met Kip"
                         },
                         new
                         {
                             Id = 2,
-                            Bereiding = "Heerlijke Marokkaanse soep, vaak gegeten tijdens Ramadan.",
+                            Bereiding = "Stap voor stap...",
                             CategorieId = 2,
                             FotoPad = "",
                             Herkomst = "Marokko",
                             IsDeleted = false,
-                            Naam = "Harira"
+                            Naam = "Vegetarische Stoof"
                         },
                         new
                         {
                             Id = 3,
-                            Bereiding = "Traditioneel Marokkaans brood.",
+                            Bereiding = "Stap voor stap...",
                             CategorieId = 3,
                             FotoPad = "",
                             Herkomst = "Marokko",
                             IsDeleted = false,
-                            Naam = "Khobz"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Bereiding = "Marokkaanse zoetigheid met honing en sesam.",
-                            CategorieId = 4,
-                            FotoPad = "",
-                            Herkomst = "Marokko",
-                            IsDeleted = false,
-                            Naam = "Chebakia"
+                            Naam = "Brood"
                         });
                 });
 

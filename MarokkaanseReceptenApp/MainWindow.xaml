@@ -1,22 +1,55 @@
 ﻿<Window x:Class="MarokkaanseReceptenApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MarokkaanseReceptenApp"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <DataGrid x:Name="ReceptenDataGrid" AutoGenerateColumns="False" Margin="10">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Naam" Binding="{Binding Naam}" Width="*"/>
-                <DataGridTextColumn Header="Categorie" Binding="{Binding Categorie.Naam}" Width="*"/>
-                <DataGridTextColumn Header="Beschrijving" Binding="{Binding Beschrijving}" Width="2*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        Title="Marokkaanse Recepten" Height="500" Width="900"
+        WindowStartupLocation="CenterScreen">
 
-        <Button Content="Refresh" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="100" Margin="10"
-            Click="RefreshButton_Click"/>
-    </Grid>
+    <DockPanel>
+        <!-- Container 1: DockPanel -->
 
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <!-- Container 2: StackPanel -->
+            <TextBlock x:Name="UserText" VerticalAlignment="Center" Margin="6"/>
+            <Button Content="Refresh" Click="RefreshButton_Click"/>
+            <Button Content="Logout" Click="Logout_Click"/>
+        </StackPanel>
+
+        <!-- Container 3: Grid -->
+        <Grid>
+            <TabControl>
+                <TabItem Header="Recepten">
+                    <DataGrid x:Name="ReceptenDataGrid" AutoGenerateColumns="True"/>
+                </TabItem>
+
+                <TabItem Header="Categorieën">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Content="Add" Click="AddCategorie_Click"/>
+                            <Button Content="Edit" Click="EditCategorie_Click"/>
+                            <Button Content="Delete" Click="DeleteCategorie_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="CategorieenDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="60"/>
+                                <DataGridTextColumn Header="Naam" Binding="{Binding Naam}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </TabItem>
+
+
+                <TabItem Header="Ingrediënten">
+                    <DataGrid x:Name="IngredientenDataGrid" AutoGenerateColumns="True"/>
+                </TabItem>
+
+                <TabItem Header="Admin" x:Name="AdminTab">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Admin tab (later: users blokkeren / rol wijzigen)" FontWeight="Bold" />
+                        <TextBlock Text="We vullen dit in de volgende stap." Margin="0,8,0,0"/>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
 </Window>

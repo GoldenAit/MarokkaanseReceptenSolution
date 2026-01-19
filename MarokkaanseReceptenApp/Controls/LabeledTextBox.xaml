@@ -1,0 +1,8 @@
+﻿<UserControl x:Class="MarokkaanseReceptenApp.Controls.LabeledTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+        <TextBox Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </StackPanel>
+</UserControl>

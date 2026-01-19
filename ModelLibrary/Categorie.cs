@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+
+
 namespace ModelLibrary.Models
 {
     public class Categorie
     {
         public int Id { get; set; }
-        public string Naam { get; set; }
+        public string Naam { get; set; } = string.Empty;
+        public bool IsDeleted { get; set; } = false;
 
         public virtual ICollection<Recept> Recepten { get; set; } = new List<Recept>();
     }
 }
-
-

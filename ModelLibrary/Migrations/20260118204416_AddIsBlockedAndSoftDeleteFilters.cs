@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ModelLibrary.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddIsBlockedAndSoftDeleteFilters : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +33,9 @@ namespace ModelLibrary.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FavoriteCuisine = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VolledigeNaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -52,7 +57,7 @@ namespace ModelLibrary.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categorieën",
+                name: "Categorieen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -62,7 +67,7 @@ namespace ModelLibrary.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categorieën", x => x.Id);
+                    table.PrimaryKey("PK_Categorieen", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,25 +183,25 @@ namespace ModelLibrary.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategorieId = table.Column<int>(type: "int", nullable: false),
                     Bereiding = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FotoPad = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Herkomst = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CategorieId = table.Column<int>(type: "int", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recepten", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recepten_Categorieën_CategorieId",
+                        name: "FK_Recepten_Categorieen_CategorieId",
                         column: x => x.CategorieId,
-                        principalTable: "Categorieën",
+                        principalTable: "Categorieen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingrediënten",
+                name: "Ingredienten",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -208,13 +213,43 @@ namespace ModelLibrary.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ingrediënten", x => x.Id);
+                    table.PrimaryKey("PK_Ingredienten", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ingrediënten_Recepten_ReceptId",
+                        name: "FK_Ingredienten_Recepten_ReceptId",
                         column: x => x.ReceptId,
                         principalTable: "Recepten",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categorieen",
+                columns: new[] { "Id", "IsDeleted", "Naam" },
+                values: new object[,]
+                {
+                    { 1, false, "Marokkaans" },
+                    { 2, false, "Vegetarisch" },
+                    { 3, false, "Bakrecepten" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Recepten",
+                columns: new[] { "Id", "Bereiding", "CategorieId", "FotoPad", "Herkomst", "IsDeleted", "Naam" },
+                values: new object[,]
+                {
+                    { 1, "Stap voor stap...", 1, "", "Marokko", false, "Tajine met Kip" },
+                    { 2, "Stap voor stap...", 2, "", "Marokko", false, "Vegetarische Stoof" },
+                    { 3, "Stap voor stap...", 3, "", "Marokko", false, "Brood" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Ingredienten",
+                columns: new[] { "Id", "Hoeveelheid", "IsDeleted", "Naam", "ReceptId" },
+                values: new object[,]
+                {
+                    { 1, "500g", false, "Kip", 1 },
+                    { 2, "200g", false, "Rijst", 1 },
+                    { 3, "100g", false, "Amandelen", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -257,8 +292,8 @@ namespace ModelLibrary.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingrediënten_ReceptId",
-                table: "Ingrediënten",
+                name: "IX_Ingredienten_ReceptId",
+                table: "Ingredienten",
                 column: "ReceptId");
 
             migrationBuilder.CreateIndex(
@@ -286,7 +321,7 @@ namespace ModelLibrary.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Ingrediënten");
+                name: "Ingredienten");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -298,7 +333,7 @@ namespace ModelLibrary.Migrations
                 name: "Recepten");
 
             migrationBuilder.DropTable(
-                name: "Categorieën");
+                name: "Categorieen");
         }
     }
 }

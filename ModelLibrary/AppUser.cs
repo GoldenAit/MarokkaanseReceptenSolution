@@ -5,12 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
+
 namespace ModelLibrary.Identity
 {
     public class AppUser : IdentityUser
     {
-        public string FavoriteCuisine { get; set; } // extra veld
-        public string VolledigeNaam { get; set; }
+        public string FavoriteCuisine { get; set; } = string.Empty;
+        public string VolledigeNaam { get; set; } = string.Empty;
+
+        public bool IsBlocked { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
     }
 }
-
