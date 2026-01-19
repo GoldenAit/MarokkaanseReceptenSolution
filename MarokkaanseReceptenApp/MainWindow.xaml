@@ -76,11 +76,24 @@
 
 
                 <TabItem Header="Admin" x:Name="AdminTab">
-                    <StackPanel Margin="10">
-                        <TextBlock Text="Admin tab (later: users blokkeren / rol wijzigen)" FontWeight="Bold" />
-                        <TextBlock Text="We vullen dit in de volgende stap." Margin="0,8,0,0"/>
-                    </StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Button Content="Refresh Users" Click="RefreshUsers_Click"/>
+                            <Button Content="Block / Unblock" Click="ToggleBlock_Click"/>
+                            <Button Content="Toggle Role (Admin/User)" Click="ToggleRole_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="UsersDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                <DataGridTextColumn Header="Naam" Binding="{Binding VolledigeNaam}" Width="200"/>
+                                <DataGridCheckBoxColumn Header="Blocked" Binding="{Binding IsBlocked}" Width="100"/>
+                                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="150"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
                 </TabItem>
+
             </TabControl>
         </Grid>
     </DockPanel>

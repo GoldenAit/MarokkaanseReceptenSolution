@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ModelLibrary;
 using ModelLibrary.Identity;
 using ModelLibrary.Models;
+using MarokkaanseReceptenApp.Models;
 using MarokkaanseReceptenApp.Windows;
 
 namespace MarokkaanseReceptenApp
@@ -15,6 +17,7 @@ namespace MarokkaanseReceptenApp
     {
         private readonly AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AppUser _currentUser;
 
         public MainWindow(AppUser user)
@@ -23,20 +26,27 @@ namespace MarokkaanseReceptenApp
 
             _context = App.Services.GetRequiredService<AppDbContext>();
             _userManager = App.Services.GetRequiredService<UserManager<AppUser>>();
+            _roleManager = App.Services.GetRequiredService<RoleManager<IdentityRole>>();
             _currentUser = user;
 
             UserText.Text = $"Ingelogd: {_currentUser.Email}";
 
             LoadData();
-            ApplyRoleUi();
+            ApplyRoleUiAsync();
         }
 
-        private async void ApplyRoleUi()
+        private async void ApplyRoleUiAsync()
         {
             var isAdmin = await _userManager.IsInRoleAsync(_currentUser, "Admin");
             AdminTab.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
+
+            if (isAdmin)
+                await LoadUsersAsync();
         }
 
+        // =======================
+        // DATA LADEN
+        // =======================
         private void LoadData()
         {
             ReceptenDataGrid.ItemsSource = _context.Recepten
@@ -66,241 +76,87 @@ namespace MarokkaanseReceptenApp
             Close();
         }
 
-        // =====================================================
-        // CRUD CATEGORIE
-        // =====================================================
-        private void AddCategorie_Click(object sender, RoutedEventArgs e)
+        // =======================
+        // ADMIN
+        // =======================
+        private async Task LoadUsersAsync()
         {
-            var win = new CategorieEditWindow();
-            win.Owner = this;
+            var users = _userManager.Users.OrderBy(u => u.Email).ToList();
+            var rows = new System.Collections.Generic.List<UserRow>();
 
-            if (win.ShowDialog() == true)
+            foreach (var u in users)
             {
-                try
+                var isAdmin = await _userManager.IsInRoleAsync(u, "Admin");
+                rows.Add(new UserRow
                 {
-                    _context.Categorieen.Add(win.Result);
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij opslaan categorie.");
-                }
+                    Id = u.Id,
+                    Email = u.Email ?? "",
+                    VolledigeNaam = u.VolledigeNaam,
+                    IsBlocked = u.IsBlocked,
+                    Role = isAdmin ? "Admin" : "User"
+                });
             }
+
+            UsersDataGrid.ItemsSource = rows;
         }
 
-        private void EditCategorie_Click(object sender, RoutedEventArgs e)
+        private async void RefreshUsers_Click(object sender, RoutedEventArgs e)
         {
-            if (CategorieenDataGrid.SelectedItem is not Categorie selected)
-            {
-                MessageBox.Show("Selecteer een categorie.");
-                return;
-            }
-
-            var win = new CategorieEditWindow(selected);
-            win.Owner = this;
-
-            if (win.ShowDialog() == true)
-            {
-                try
-                {
-                    var db = _context.Categorieen.First(c => c.Id == selected.Id);
-                    db.Naam = win.Result.Naam;
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij wijzigen categorie.");
-                }
-            }
+            await LoadUsersAsync();
         }
 
-        private void DeleteCategorie_Click(object sender, RoutedEventArgs e)
+        private async void ToggleBlock_Click(object sender, RoutedEventArgs e)
         {
-            if (CategorieenDataGrid.SelectedItem is not Categorie selected)
+            if (UsersDataGrid.SelectedItem is not UserRow selected)
             {
-                MessageBox.Show("Selecteer een categorie.");
+                MessageBox.Show("Selecteer een user.");
                 return;
             }
 
-            if (MessageBox.Show("Categorie verwijderen (soft delete)?",
-                "Bevestiging", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            if (selected.Id == _currentUser.Id)
+            {
+                MessageBox.Show("Je kan jezelf niet blokkeren.");
                 return;
+            }
 
-            try
-            {
-                var db = _context.Categorieen.First(c => c.Id == selected.Id);
-                db.IsDeleted = true;
-                _context.SaveChanges();
-                LoadData();
-            }
-            catch
-            {
-                MessageBox.Show("Fout bij verwijderen categorie.");
-            }
+            var user = await _userManager.FindByIdAsync(selected.Id);
+            if (user == null) return;
+
+            user.IsBlocked = !user.IsBlocked;
+            await _userManager.UpdateAsync(user);
+            await LoadUsersAsync();
         }
 
-        // =====================================================
-        // CRUD RECEPT
-        // =====================================================
-        private void AddRecept_Click(object sender, RoutedEventArgs e)
+        private async void ToggleRole_Click(object sender, RoutedEventArgs e)
         {
-            var categorieen = _context.Categorieen.OrderBy(c => c.Naam).ToList();
-            var win = new ReceptEditWindow(categorieen);
-            win.Owner = this;
-
-            if (win.ShowDialog() == true)
+            if (UsersDataGrid.SelectedItem is not UserRow selected)
             {
-                try
-                {
-                    _context.Recepten.Add(win.Result);
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij opslaan recept.");
-                }
-            }
-        }
-
-        private void EditRecept_Click(object sender, RoutedEventArgs e)
-        {
-            if (ReceptenDataGrid.SelectedItem is not Recept selected)
-            {
-                MessageBox.Show("Selecteer een recept.");
+                MessageBox.Show("Selecteer een user.");
                 return;
             }
 
-            var categorieen = _context.Categorieen.OrderBy(c => c.Naam).ToList();
-            var win = new ReceptEditWindow(categorieen, selected);
-            win.Owner = this;
-
-            if (win.ShowDialog() == true)
+            if (selected.Id == _currentUser.Id)
             {
-                try
-                {
-                    var db = _context.Recepten.First(r => r.Id == selected.Id);
-                    db.Naam = win.Result.Naam;
-                    db.CategorieId = win.Result.CategorieId;
-                    db.Bereiding = win.Result.Bereiding;
-                    db.FotoPad = win.Result.FotoPad;
-                    db.Herkomst = win.Result.Herkomst;
-
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij wijzigen recept.");
-                }
-            }
-        }
-
-        private void DeleteRecept_Click(object sender, RoutedEventArgs e)
-        {
-            if (ReceptenDataGrid.SelectedItem is not Recept selected)
-            {
-                MessageBox.Show("Selecteer een recept.");
+                MessageBox.Show("Je kan je eigen rol niet wijzigen.");
                 return;
             }
 
-            if (MessageBox.Show("Recept verwijderen (soft delete)?",
-                "Bevestiging", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                return;
+            var user = await _userManager.FindByIdAsync(selected.Id);
+            if (user == null) return;
 
-            try
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            if (isAdmin)
             {
-                var db = _context.Recepten.First(r => r.Id == selected.Id);
-                db.IsDeleted = true;
-                _context.SaveChanges();
-                LoadData();
+                await _userManager.RemoveFromRoleAsync(user, "Admin");
+                await _userManager.AddToRoleAsync(user, "User");
             }
-            catch
+            else
             {
-                MessageBox.Show("Fout bij verwijderen recept.");
-            }
-        }
-
-        // =====================================================
-        // CRUD INGREDIENT
-        // =====================================================
-        private void AddIngredient_Click(object sender, RoutedEventArgs e)
-        {
-            var recepten = _context.Recepten.OrderBy(r => r.Naam).ToList();
-            var win = new IngredientEditWindow(recepten);
-            win.Owner = this;
-
-            if (win.ShowDialog() == true)
-            {
-                try
-                {
-                    _context.Ingredienten.Add(win.Result);
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij opslaan ingrediënt.");
-                }
-            }
-        }
-
-        private void EditIngredient_Click(object sender, RoutedEventArgs e)
-        {
-            if (IngredientenDataGrid.SelectedItem is not Ingredient selected)
-            {
-                MessageBox.Show("Selecteer een ingrediënt.");
-                return;
+                await _userManager.AddToRoleAsync(user, "Admin");
             }
 
-            var recepten = _context.Recepten.OrderBy(r => r.Naam).ToList();
-            var win = new IngredientEditWindow(recepten, selected);
-            win.Owner = this;
-
-            if (win.ShowDialog() == true)
-            {
-                try
-                {
-                    var db = _context.Ingredienten.First(i => i.Id == selected.Id);
-                    db.Naam = win.Result.Naam;
-                    db.Hoeveelheid = win.Result.Hoeveelheid;
-                    db.ReceptId = win.Result.ReceptId;
-
-                    _context.SaveChanges();
-                    LoadData();
-                }
-                catch
-                {
-                    MessageBox.Show("Fout bij wijzigen ingrediënt.");
-                }
-            }
-        }
-
-        private void DeleteIngredient_Click(object sender, RoutedEventArgs e)
-        {
-            if (IngredientenDataGrid.SelectedItem is not Ingredient selected)
-            {
-                MessageBox.Show("Selecteer een ingrediënt.");
-                return;
-            }
-
-            if (MessageBox.Show("Ingrediënt verwijderen (soft delete)?",
-                "Bevestiging", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                return;
-
-            try
-            {
-                var db = _context.Ingredienten.First(i => i.Id == selected.Id);
-                db.IsDeleted = true;
-                _context.SaveChanges();
-                LoadData();
-            }
-            catch
-            {
-                MessageBox.Show("Fout bij verwijderen ingrediënt.");
-            }
+            await LoadUsersAsync();
         }
     }
 }
